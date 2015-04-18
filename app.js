@@ -35,6 +35,23 @@ server.on('error', onError);
 server.on('listening', onListening);
 
 /**
+ * Cleanup on quit
+ */
+
+function exitHandler(options, err) {
+    hostapd.cleanup();
+    socket.cleanup();
+    if (err) console.log(err.stack);
+    if (options.exit) process.exit();
+}
+
+//do something when app is closing
+process.on('exit', exitHandler.bind(null, {}));
+
+//catches ctrl+c event
+process.on('SIGINT', exitHandler.bind(null, {exit: true}));
+
+/**
  * Normalize a port into a number, string, or false.
  */
 

@@ -1,6 +1,4 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
-  a#hostapd-start.ctrl(href='#') hello
+  a#hostapd-start.ctrl.require-conn.btn.btn-primary(href='#') Start hostapd

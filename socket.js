@@ -26,4 +26,13 @@ module.exports = function (app, hostapd) {
     hostapd.on('update', function (configFile) {
         io.emit('hostapd-update', configFile);
     });
+
+    setInterval(function () {
+        io.emit('sync', (new Date).getTime());
+    }, 5e3);
+
+    this.cleanup = function () {
+    }
+
+    return this;
 }

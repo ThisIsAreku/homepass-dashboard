@@ -1,8 +1,13 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    padding-top: 25px;
+    background: #EEE;
 }
 
-a {
-  color: #00B7FF;
+#main-container > div {
+    background: #FFF;
+}
+
+.sidebar ul {
+    list-style: none none;
+    padding-left: 0;
 }

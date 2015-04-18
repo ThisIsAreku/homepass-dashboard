@@ -40,17 +40,19 @@ function createHostapd () {
         }
         running = true;
 
-        hostapdProcess = sudo(['ifconfig', configFile]);
+        // hostapdProcess = sudo(['ifconfig', configFile]);
+        // debug
+        hostapdProcess = require('child_process').spawn('cat', [configFile]);
         hostapdProcess.on('started', function () {
             p.emit('start');
         });
         hostapdProcess.stdout.on('data', function (data) {
             running = true;
-            p.emit('data', {'type': 'strerr', 'data': data.toString()});
+            p.emit('data', {'type': 'stdout', 'data': data.toString()});
         });
         hostapdProcess.stderr.on('data', function (data) {
             running = true;
-            p.emit('data', {'type': 'strerr', 'data': data.toString()});
+            p.emit('data', {'type': 'stderr', 'data': data.toString()});
         });
         hostapdProcess.on('exit', function (code, signal) {
             running = false;
@@ -79,6 +81,11 @@ function createHostapd () {
         }
     }
 
+    this.getConfig = function (key) {
+        var finalConfig = merge(this.defaultConfig, this.currentConfig);
+        return finalConfig[key];
+    }
+
     this.buildConfigFile = function () {
         var finalConfig = merge(this.defaultConfig, this.currentConfig);
         var finalConfigText = '';
@@ -98,6 +105,10 @@ function createHostapd () {
 
     this.isRunning = function () {
         return running;
+    }
+
+    this.cleanup = function () {
+        fs.unlinkSync(configFile);
     }
 
     return this;
