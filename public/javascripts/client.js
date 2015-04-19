@@ -36,6 +36,16 @@ socket.on('hostapd-update', function (data) {
     console.log(data);
 });
 
+socket.on('hostapd-connected', function (data) {
+    addLogMessage('info', 'hostapd', 'C: '+data.mac);
+    console.log(data);
+});
+
+socket.on('hostapd-disconnected', function (data) {
+    addLogMessage('info', 'hostapd', 'D: '+data.mac);
+    console.log(data);
+});
+
 
 
 $('#hostapd-start').click(function (e) {

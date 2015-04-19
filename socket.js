@@ -23,6 +23,12 @@ module.exports = function (app, hostapd) {
     hostapd.on('data', function (data) {
         io.emit('hostapd-data', data);
     });
+    hostapd.on('connected', function (data) {
+        io.emit('hostapd-connected', data);
+    });
+    hostapd.on('disconnected', function (data) {
+        io.emit('hostapd-disconnected', data);
+    });
     hostapd.on('update', function (configFile) {
         io.emit('hostapd-update', configFile);
     });

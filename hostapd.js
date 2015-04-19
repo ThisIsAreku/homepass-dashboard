@@ -42,13 +42,31 @@ function createHostapd () {
 
         // hostapdProcess = sudo(['ifconfig', configFile]);
         // debug
-        hostapdProcess = require('child_process').spawn('cat', [configFile]);
+        hostapdProcess = require('child_process').spawn('cat', ['testlog.txt']);
         hostapdProcess.on('started', function () {
             p.emit('start');
         });
         hostapdProcess.stdout.on('data', function (data) {
             running = true;
-            p.emit('data', {'type': 'stdout', 'data': data.toString()});
+            data.toString().split('\n').forEach(function (line) {
+                if (line == '') {
+                    return;
+                }
+                
+                var re = /([a-z0-9]+): AP-STA-((?:DIS)?CONNECTED) ((?:[0-9a-f]{2}:){5}(?:[0-9a-f]{2}))/i; 
+                var str = line;
+                var m;
+                 
+                if ((m = re.exec(str)) !== null) {
+                    if (m.index === re.lastIndex) {
+                        re.lastIndex++;
+                    }
+
+                    p.emit(m[2].toLowerCase(), {'interface': m[1], 'mac': m[3]});
+                } else {
+                    p.emit('data', {'type': 'stdout', 'data': line});
+                }
+            })
         });
         hostapdProcess.stderr.on('data', function (data) {
             running = true;
