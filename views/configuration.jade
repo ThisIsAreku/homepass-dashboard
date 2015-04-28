@@ -1,0 +1,18 @@
+extends layout
+
+block content
+    div(role='tabpanel')
+        ul.nav.nav-tabs(role='tablist')
+            li.active(role='presentation')
+                a(role='tab', href='#home', aria-controls='home', data-toggle='tab') Home
+            li(role='presentation')
+                a(role='tab', href='#profile', aria-controls='profile', data-toggle='tab') Profile
+            li(role='presentation')
+                a(role='tab', href='#messages', aria-controls='messages', data-toggle='tab') Messages
+            li(role='presentation')
+                a(role='tab', href='#settings', aria-controls='settings', data-toggle='tab') Settings
+    div.tab-content
+        div#home.tab-pane.active(role='tabpanel')
+        div#profile.tab-pane(role='tabpanel')
+        div#messages.tab-pane(role='tabpanel')
+        div#settings.tab-pane(role='tabpanel')

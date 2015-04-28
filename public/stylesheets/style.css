@@ -3,8 +3,9 @@ body {
     background: #EEE;
 }
 
-#main-container > div {
+#main-container > div.container-wrapper {
     background: #FFF;
+    border-radius: 3px;
 }
 
 .sidebar ul {

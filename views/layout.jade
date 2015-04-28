@@ -6,14 +6,15 @@ html
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
     div#main-container.container
-        div.col-md-8
-            h1 Homepass-pi 
-                small #{title}
-            block content
-            br.clearfix
-            br.clearfix
-        div.sidebar.col-md-4
-            ul#log-list
+        div.container-wrapper.clearfix
+            div.col-md-8
+                h1 Homepass-pi 
+                    small #{title}
+                block content
+                br.clearfix
+                br.clearfix
+            div.sidebar.col-md-4
+                ul#log-list
 
     script(src='/socket.io/socket.io.js')
     script(src='/javascripts/jquery-2.1.3.min.js')

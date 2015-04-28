@@ -5,9 +5,7 @@ var merge        = require('merge');
 var EventEmitter = require('events').EventEmitter;
 var mixin        = require('merge-descriptors');
 
-exports = module.exports = createHostapd;
-
-function createHostapd () {
+exports = module.exports = function () {
     mixin(this, EventEmitter.prototype, false);
     //events.EventEmitter.call(this);
 

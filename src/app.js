@@ -1,10 +1,25 @@
 /**
  * Module dependencies.
  */
+ console.log("run");
 
+exports = module.exports = {
+    "getServer": function () {
+        return server;
+    },
+    "getHostapd": function () {
+        return hostapd;
+    },
+    "getSocket": function () {
+        return socket;
+    },
+    "getWeb": function () {
+        return web;
+    },
+};
+
+var hostapd = require('./hostapd')();
 var web = require('./web');
-var socket = require('./socket');
-var hostapd = require('./hostapd');
 
 var debug = require('debug')('homepass-pi:server');
 var http = require('http');
@@ -21,8 +36,7 @@ web.set('port', port);
  */
 
 var server = http.createServer(web);
-var hostapd = hostapd();
-var socket = socket(server, hostapd);
+var socket = require('./socket');
 hostapd.setBssid('00:00:00:00:00:00');
 hostapd.buildConfigFile();
 

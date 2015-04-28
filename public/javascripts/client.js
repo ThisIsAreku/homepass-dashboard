@@ -4,6 +4,9 @@ var logColor = {
     'stderr': 'danger',
     'stdout': 'info'
 }
+// -----
+// general
+// -----
 socket.on('connect', function () {
     connected = true;
     addLogMessage('success', 'sys', 'Connected to server');
@@ -16,7 +19,16 @@ socket.on('sync', function (ts) {
     var diff = (new Date).getTime() - ts;
     // addLogMessage('muted', 'sys', 'Diff time: ' + diff+' ms');
 });
+// -----
+// init
+// -----
+socket.on('ap-names', function (data) {
+    console.log(data);
+})
 
+// -----
+// hostapd
+// -----
 socket.on('hostapd-started', function (data) {
     addLogMessage('info', 'hostapd', 'started');
     console.log(data);
