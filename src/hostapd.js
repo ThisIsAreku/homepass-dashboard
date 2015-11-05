@@ -1,131 +1,149 @@
-var sudo         = require('sudo');
-var os           = require('os');
-var fs           = require('fs');
-var merge        = require('merge');
+"use strict";
+var sudo = require('sudo');
+var os = require('os');
+var fs = require('fs');
+var merge = require('merge');
 var EventEmitter = require('events').EventEmitter;
-var mixin        = require('merge-descriptors');
+var mixin = require('merge-descriptors');
 
-exports = module.exports = function () {
-    mixin(this, EventEmitter.prototype, false);
-    //events.EventEmitter.call(this);
+class Hostapd extends EventEmitter {
+    constructor() {
+        super();
 
-    var p = this;
-    var configFile = os.tmpdir() + 'hostapd.conf';
-    var hostapdProcess;
-    var running = false;
+        this.configFile = os.tmpdir() + '/hostapd.conf';
+        this.hostapdProcess = null;
+        this.running = false;
 
-    this.defaultConfig = {
-        "interface": "wlan0",
-        "bridge": "br0",
-        "driver": "nl80211",
-        "ssid": "attwifi",
-        //"bssid": %"bssid%",
-        "hw_mode": "g",
-        "channel": "6",
-        "auth_algs": "1",
-        "wpa": "0",
-        "macaddr_acl": "1",
-        //"accept_mac_file": %"accept_mac_file%",
-        "ieee80211n": "1",
-        "wmm_enabled": "0",
-        "ignore_broadcast_ssid": "0",
+        this.defaultConfig = {
+            "interface": "wlan0",
+            "bridge": "br0",
+            "driver": "nl80211",
+            "ssid": null,
+            "bssid": null,
+            "hw_mode": "g",
+            "channel": "6",
+            "auth_algs": "1",
+            "wpa": "0",
+            "macaddr_acl": "1",
+            //"accept_mac_file": %"accept_mac_file%",
+            "ieee80211n": "1",
+            "wmm_enabled": "0",
+            "ignore_broadcast_ssid": "0"
+        };
+        this.currentConfig = {};
+
     }
-    this.currentConfig = {};
 
-    this.start = function () {
-        if (running) {
+    start() {
+        if (this.running) {
             return;
         }
-        running = true;
+        this.running = true;
 
         // hostapdProcess = sudo(['ifconfig', configFile]);
         // debug
-        hostapdProcess = require('child_process').spawn('cat', ['testlog.txt']);
-        hostapdProcess.on('started', function () {
-            p.emit('start');
-        });
-        hostapdProcess.stdout.on('data', function (data) {
-            running = true;
-            data.toString().split('\n').forEach(function (line) {
+        this.hostapdProcess = require('child_process').spawn('./testlog.sh');
+        var firstData = true;
+        this.hostapdProcess.stdout.on('data', (data) => {
+            this.running = true;
+            if (firstData) {
+                firstData = false;
+                this.emit('start');
+            }
+
+            data.toString().split('\n').forEach((line) => {
                 if (line == '') {
                     return;
                 }
-                
-                var re = /([a-z0-9]+): AP-STA-((?:DIS)?CONNECTED) ((?:[0-9a-f]{2}:){5}(?:[0-9a-f]{2}))/i; 
-                var str = line;
+
+                var re = /([a-z0-9]+): AP-STA-((?:DIS)?CONNECTED) ((?:[0-9a-f]{2}:){5}(?:[0-9a-f]{2}))/i;
                 var m;
-                 
-                if ((m = re.exec(str)) !== null) {
+                if ((m = re.exec(line)) !== null) {
                     if (m.index === re.lastIndex) {
                         re.lastIndex++;
                     }
 
-                    p.emit(m[2].toLowerCase(), {'interface': m[1], 'mac': m[3]});
+                    this.emit(m[2].toLowerCase(), {'interface': m[1], 'mac': m[3]});
                 } else {
-                    p.emit('data', {'type': 'stdout', 'data': line});
+                    this.emit('data', {'type': 'stdout', 'data': line});
                 }
             })
         });
-        hostapdProcess.stderr.on('data', function (data) {
-            running = true;
-            p.emit('data', {'type': 'stderr', 'data': data.toString()});
+        this.hostapdProcess.stderr.on('data', (data) => {
+            this.running = true;
+            this.emit('data', {'type': 'stderr', 'data': data.toString()});
         });
-        hostapdProcess.on('exit', function (code, signal) {
-            running = false;
-            p.emit('exit');
+        this.hostapdProcess.on('exit', (code, signal) => {
+            this.running = false;
+            this.emit('exit');
         });
     }
 
-    this.stop = function () {
-        if (!running) {
+    stop() {
+        if (!this.running) {
             return;
         }
 
-        hostapdProcess.kill();
+        this.hostapdProcess.kill();
     }
 
-    this.restart = function () {
-        p.stop();
-        hostapdProcess.on('exit', function (code, signal) {
-            p.start();
-        });
+    restart() {
+        this.stop();
+        this.hostapdProcess.on('exit', (code, signal) => {
+            this.start();
+        })
+        ;
     }
 
-    this.setBssid = function (mac) {
+    setBssid(mac) {
         if (mac.match(/^([0-9A-F]{2}:){5}([0-9A-F]{2})$/i) !== null) {
             this.currentConfig['bssid'] = mac;
         }
     }
 
-    this.getConfig = function (key) {
+    setSsid(ssid) {
+        this.currentConfig['ssid'] = ssid;
+    }
+
+    getConfig(key) {
         var finalConfig = merge(this.defaultConfig, this.currentConfig);
         return finalConfig[key];
     }
 
-    this.buildConfigFile = function () {
+    buildConfigFile() {
         var finalConfig = merge(this.defaultConfig, this.currentConfig);
         var finalConfigText = '';
-        Object.keys(finalConfig).forEach(function(key) {
+        Object.keys(finalConfig).forEach((key) => {
             var val = finalConfig[key];
             finalConfigText += key + '=' + val + os.EOL;
-        });
+        })
+        ;
 
-        fs.writeFile(configFile, finalConfigText, function(err) {
-            if(err) {
+        fs.writeFile(this.configFile, finalConfigText, (err) => {
+            if (err) {
                 return console.log(err);
             }
 
-            p.emit('update', configFile);
-        });
+            this.emit('update', this.configFile);
+        })
+        ;
     }
 
-    this.isRunning = function () {
-        return running;
+    isRunning() {
+        return this.running;
     }
 
-    this.cleanup = function () {
-        fs.unlinkSync(configFile);
-    }
+    cleanup() {
+        fs.access(this.configFile, fs.R_OK | fs.W_OK, (err) => {
+            if (!err) {
+                fs.unlink(this.configFile, () => {
 
-    return this;
+                });
+            }
+        })
+    }
 }
+
+var instance = new Hostapd();
+
+module.exports = instance;

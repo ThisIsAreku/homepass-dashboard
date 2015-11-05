@@ -1,14 +1,14 @@
+"use strict";
 var express = require('express');
-var app = require('../src/app');
+var hostapd = require('../src/hostapd');
 var router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Hello !', hostapd_running: app.getHostapd().isRunning() });
+router.get('/partials/*', function (req, res, next) {
+    res.render(req.params['0']);
 });
 
-router.get('/configuration', function(req, res, next) {
-  res.render('configuration', { title: 'Configuration' });
+router.get('*', function (req, res, next) {
+    res.render('index');
 });
 
 module.exports = router;

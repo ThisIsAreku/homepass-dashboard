@@ -1,18 +1,20 @@
-extends layout
-
-block content
-    div(role='tabpanel')
-        ul.nav.nav-tabs(role='tablist')
-            li.active(role='presentation')
-                a(role='tab', href='#home', aria-controls='home', data-toggle='tab') Home
-            li(role='presentation')
-                a(role='tab', href='#profile', aria-controls='profile', data-toggle='tab') Profile
-            li(role='presentation')
-                a(role='tab', href='#messages', aria-controls='messages', data-toggle='tab') Messages
-            li(role='presentation')
-                a(role='tab', href='#settings', aria-controls='settings', data-toggle='tab') Settings
-    div.tab-content
-        div#home.tab-pane.active(role='tabpanel')
-        div#profile.tab-pane(role='tabpanel')
-        div#messages.tab-pane(role='tabpanel')
-        div#settings.tab-pane(role='tabpanel')
+h2 Configuration
+div(role='tabpanel')
+    ul.nav.nav-tabs(role='tablist')
+        li.active(role='presentation')
+            a#cfg-ssid(role='tab', href='#ssid', aria-controls='ssid', data-toggle='tab') Access point
+        li(role='presentation')
+            a#cfg-bssid(role='tab', href='#bssid', aria-controls='bssid', data-toggle='tab') Mac address
+div.tab-content
+    div#ssid.tab-pane.active(role='tabpanel')
+        table.table.table-striped.table-hover
+            tr
+                th Name
+                th Company
+                th Zone
+            tr(ng-repeat='ssid in ssidList',ng-cloak)
+                td {{ssid.ap}}
+                td {{ssid.company}}
+                td {{ssid.zone}}
+    div#bssid.tab-pane(role='tabpanel')
+        div bssid

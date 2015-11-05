@@ -1,0 +1,26 @@
+{
+  "name": "homepass-pi",
+  "description": "",
+  "main": "homepass-pi.js",
+  "authors": [
+    "Alexandre Boucey <alexandre.boucey@gmail.com> (http://pro.areku.fr/)"
+  ],
+  "license": "GPLv3",
+  "homepage": "https://github.com/ThisIsAreku/homepass-pi",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-route": "~1.4.7",
+    "bootstrap": "~3.3.5",
+    "moment": "~2.10.6",
+    "angular": "~1.4.7",
+    "jquery": "~2.1.4"
+  }
+}

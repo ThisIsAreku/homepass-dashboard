@@ -1,2 +1,4 @@
 /node_modules/
 /system/
+/public/components/
+public/javascripts/application.js*

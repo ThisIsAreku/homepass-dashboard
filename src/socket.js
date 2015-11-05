@@ -1,49 +1,63 @@
+"use strict";
 var socketio = require('socket.io');
-var app = require('./app');
+var hostapd = require('./hostapd');
+var web = require('./web');
 var data = require('./data');
-var io = socketio(app.getServer());
+var io = socketio(web);
 
-io.on('connection', function (socket) {
-    socket.emit('ap-names', data.getAPNames());
+io.on('connection', (socket) => {
+    socket.on('ap-names', (fn) => {
+        fn(data.getAPNames());
+    });
 
-    socket.on('ctrl-hostapd-stop', function () {
-        app.getHostapd().stop();
+    socket.on('hostapd-status', (fn) => {
+        fn({
+            running: hostapd.isRunning(),
+            currentBssid: hostapd.getConfig('bssid'),
+            currentSsid: hostapd.getConfig('ssid')
+        });
     });
-    socket.on('ctrl-hostapd-start', function () {
-        app.getHostapd().start();
+    socket.on('ctrl-hostapd-stop', () => {
+        hostapd.stop();
     });
-    socket.on('set-temp-mac', function (mac) {
-        app.getHostapd().setBssid(mac);
-        app.getHostapd().restart();
+    socket.on('ctrl-hostapd-start', () => {
+        hostapd.start();
+    });
+    socket.on('set-temp-mac', (mac) => {
+        hostapd.setBssid(mac);
+        hostapd.restart();
     });
 });
 
-app.getHostapd().on('start', function () {
-    io.emit('hostapd-start');
+hostapd.on('start', () => {
+    io.emit('hostapd-start', {
+        running: hostapd.isRunning(),
+        currentBssid: hostapd.getConfig('bssid'),
+        currentSsid: hostapd.getConfig('ssid')
+    });
 });
-app.getHostapd().on('exit', function () {
-    io.emit('hostapd-exit');
+hostapd.on('exit', () => {
+    io.emit('hostapd-exit', {
+        running: hostapd.isRunning(),
+        currentBssid: hostapd.getConfig('bssid'),
+        currentSsid: hostapd.getConfig('ssid')
+    });
 });
-app.getHostapd().on('data', function (data) {
+hostapd.on('data', (data) => {
     io.emit('hostapd-data', data);
 });
-app.getHostapd().on('connected', function (data) {
+hostapd.on('connected', (data) => {
     io.emit('hostapd-connected', data);
 });
-app.getHostapd().on('disconnected', function (data) {
+hostapd.on('disconnected', (data) => {
     io.emit('hostapd-disconnected', data);
 });
-app.getHostapd().on('update', function (configFile) {
+hostapd.on('update', (configFile) => {
     io.emit('hostapd-update', configFile);
 });
 
-setInterval(function () {
-    io.emit('sync', (new Date).getTime());
-}, 5e3);
-
-
 exports = module.exports = {
-    "cleanup": function () {
+    "cleanup": () => {
         console.log("cleanup");
     }
 }

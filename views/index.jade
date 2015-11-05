@@ -1,4 +1,53 @@
-extends layout
+doctype html
+html(ng-app="homepass-pi",ng-controller="ApplicationCtrl")
+    head
+        title Homepass-pi
+        link(rel='stylesheet', href='/public/components/bootstrap/dist/css/bootstrap.min.css')
+        link(rel='stylesheet', href='/public/stylesheets/style.css')
+        base(href="/")
+    body
+        div#main-container.container
+            nav.navbar.navbar-default
+                div.container-fluid
+                    div.navbar-header
+                        a.navbar-brand(href='') Homepass-pi
+                    div.collapse.navbar-collapse
+                        ul.nav.navbar-nav
+                            li
+                                a(href='/') Accueil
+                            li
+                                a(href='/configuration') Configuration
+                        div.nav.navbar-nav.navbar-right(ng-cloak)
+                            span.label.label-default {{hostapd.currentSsid}} - {{hostapd.currentBssid}}
+                            a#hostapd-toggle.ctrl.require-conn.navbar-btn.btn(href='#',ng-class="hostapd.running ? 'btn-danger' : 'btn-success'",ng-click='toggleHostapd()')
+                                span(ng-if='hostapd.running') Stop
+                                span(ng-if='!hostapd.running') Start
+            div.container-wrapper.clearfix
+                div.col-md-8
+                    div(ng-view)
+                    br.clearfix
+                    br.clearfix
+                div.sidebar.col-md-4
+                    div(ng-show='hostapd.running')
+                        h6 Next change
+                        div.media
+                            div.media-left
+                                a(href='#')
+                                    span.glyphicon.glyphicon-pause
+                            div.media-body
+                                div.progress
+                                    div.progress-bar(role="progressbar",aria-valuenow="60",aria-valuemin="0",aria-valuemax="100",style="width: 60%;") 60%
 
-block content
-  a#hostapd-start.ctrl.require-conn.btn.btn-primary(href='#') Start hostapd #{hostapd_running}
+                    h6 Console
+                    ul(ng-cloak)
+                        li(ng-repeat='log in logs | reverse')
+                            span(title='{{log.date}}',class="label label-{{log.type}}") {{log.tag}}
+                            span(class="{{'text-' + log.type}}")  {{log.msg}}
+
+        script(src='/public/components/angular/angular.min.js')
+        script(src='/public/components/angular-route/angular-route.min.js')
+        script(src='/public/components/jquery/dist/jquery.min.js')
+        script(src='/public/components/bootstrap/dist/js/bootstrap.min.js')
+        script(src='/public/components/moment/min/moment-with-locales.min.js')
+        script(src='/socket.io/socket.io.js')
+        script(src='/public/javascripts/application.js')
