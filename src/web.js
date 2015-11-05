@@ -83,6 +83,4 @@ function normalizePort(val) {
 }
 server.listen(port);
 
-console.log("Started");
-
 module.exports = server;
