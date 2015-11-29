@@ -1,27 +1,39 @@
 "use strict";
-var socketio = require('socket.io');
-var hostapd = require('./hostapd');
-var web = require('./web');
-var data = require('./data');
-var io = socketio(web);
+const socketio = require('socket.io');
+const hostapd = require('./hostapd');
+const web = require('./web');
+const data = require('./data');
+const scheduler = require('./scheduler');
+const io = socketio(web);
+
+function compileInfo() {
+    return {
+        running: hostapd.isRunning(),
+        scheduled: scheduler.isScheduled(),
+        scheduleInterval: scheduler.getScheduleInterval(),
+        lastRotationTimestamp: scheduler.getLastRotationTimestamp(),
+        currentBssid: hostapd.getConfig('bssid'),
+        currentSsid: hostapd.getConfig('ssid'),
+        percentage: (Date.now() - scheduler.getLastRotationTimestamp() * 100 / scheduler.getScheduleInterval())
+    }
+}
 
 io.on('connection', (socket) => {
     socket.on('ap-names', (fn) => {
         fn(data.getAPNames());
     });
+    socket.on('mac-addresses', (fn) => {
+        fn(data.getMacAddresses());
+    });
 
     socket.on('hostapd-status', (fn) => {
-        fn({
-            running: hostapd.isRunning(),
-            currentBssid: hostapd.getConfig('bssid'),
-            currentSsid: hostapd.getConfig('ssid')
-        });
+        fn(compileInfo());
     });
-    socket.on('ctrl-hostapd-stop', () => {
-        hostapd.stop();
+    socket.on('ctrl-app-stop', () => {
+        scheduler.cancelSchedule();
     });
-    socket.on('ctrl-hostapd-start', () => {
-        hostapd.start();
+    socket.on('ctrl-app-start', () => {
+        scheduler.schedule();
     });
     socket.on('set-temp-mac', (mac) => {
         hostapd.setBssid(mac);
@@ -30,18 +42,10 @@ io.on('connection', (socket) => {
 });
 
 hostapd.on('start', () => {
-    io.emit('hostapd-start', {
-        running: hostapd.isRunning(),
-        currentBssid: hostapd.getConfig('bssid'),
-        currentSsid: hostapd.getConfig('ssid')
-    });
+    io.emit('hostapd-start', compileInfo());
 });
 hostapd.on('exit', () => {
-    io.emit('hostapd-exit', {
-        running: hostapd.isRunning(),
-        currentBssid: hostapd.getConfig('bssid'),
-        currentSsid: hostapd.getConfig('ssid')
-    });
+    io.emit('hostapd-exit', compileInfo());
 });
 hostapd.on('data', (data) => {
     io.emit('hostapd-data', data);

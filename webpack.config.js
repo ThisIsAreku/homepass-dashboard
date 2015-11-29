@@ -1,13 +1,12 @@
-var Path             = require('path');
-var node_modules_dir = Path.resolve(__dirname, 'node_modules');
-var isEnvProd        = process.env.NODE_ENV === 'production';
+var Path = require('path');
+var isEnvProd = process.env.NODE_ENV === 'production';
 
 var config = module.exports = {
 
     target: 'web',
 
     entry: {
-        application: Path.join(__dirname, 'private/javascripts/app.js'),
+        application: Path.join(__dirname, 'private/app.js'),
     },
 
     output: {
@@ -19,9 +18,16 @@ var config = module.exports = {
     module: {
         loaders: [
             {
-                test: /\.js$/,
-                exclude: node_modules_dir,
-                loaders: ['babel-loader']
+                test: /\.jsx?$/,
+                exclude: /(node_modules|bower_components)/,
+                loader: 'babel',
+                query: {
+                    presets: ['es2015']
+                }
+            },
+            {
+                test: /\.css$/,
+                loader: "style-loader!css-loader"
             }
         ]
     },

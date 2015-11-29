@@ -1,7 +1,5 @@
-module.exports = /*@ngInject*/  ()  => {
-    "use strict";
-    var socket = io.connect();
-
-
-    return socket;
+"use strict";
+module.exports = /*@ngInject*/ ($log) => {
+    $log.log("Loading socket");
+    return io.connect();
 };

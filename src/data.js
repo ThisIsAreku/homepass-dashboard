@@ -1,10 +1,9 @@
 "use strict";
-var fs = require('fs');
-
-var cache = {};
-
 module.exports = {
-    "getAPNames": function() {
+    getAPNames() {
         return require('../data/ap_names.json');
+    },
+    getMacAddresses() {
+        return require('../data/mac_addresses.json');
     }
-}
+};

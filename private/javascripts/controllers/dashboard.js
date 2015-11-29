@@ -1,3 +1,3 @@
 "use strict";
-module.exports = /*@ngInject*/ function ($scope, $socket) {
+module.exports = /*@ngInject*/ function ($scope) {
 };

@@ -1,12 +1,10 @@
 "use strict";
-var sudo = require('sudo');
-var os = require('os');
-var fs = require('fs');
-var merge = require('merge');
-var EventEmitter = require('events').EventEmitter;
-var mixin = require('merge-descriptors');
+const sudo = require('sudo');
+const os = require('os');
+const fs = require('fs');
+const merge = require('merge');
 
-class Hostapd extends EventEmitter {
+class Hostapd extends require('events').EventEmitter {
     constructor() {
         super();
 
@@ -80,11 +78,9 @@ class Hostapd extends EventEmitter {
     }
 
     stop() {
-        if (!this.running) {
-            return;
+        if (this.running) {
+            this.hostapdProcess.kill();
         }
-
-        this.hostapdProcess.kill();
     }
 
     restart() {
@@ -111,22 +107,24 @@ class Hostapd extends EventEmitter {
     }
 
     buildConfigFile() {
-        var finalConfig = merge(this.defaultConfig, this.currentConfig);
-        var finalConfigText = '';
-        Object.keys(finalConfig).forEach((key) => {
-            var val = finalConfig[key];
-            finalConfigText += key + '=' + val + os.EOL;
-        })
-        ;
+        return new Promise((resolve, reject) => {
+            var finalConfig = merge(this.defaultConfig, this.currentConfig);
+            var finalConfigText = '';
+            Object.keys(finalConfig).forEach((key) => {
+                var val = finalConfig[key];
+                finalConfigText += key + '=' + val + os.EOL;
+            })
+            ;
 
-        fs.writeFile(this.configFile, finalConfigText, (err) => {
-            if (err) {
-                return console.log(err);
-            }
+            fs.writeFile(this.configFile, finalConfigText, (err) => {
+                if (err) {
+                    return reject(err);
+                }
 
-            this.emit('update', this.configFile);
-        })
-        ;
+                this.emit('update', this.configFile);
+                resolve();
+            });
+        });
     }
 
     isRunning() {
@@ -144,6 +142,6 @@ class Hostapd extends EventEmitter {
     }
 }
 
-var instance = new Hostapd();
+const instance = new Hostapd();
 
 module.exports = instance;

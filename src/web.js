@@ -3,14 +3,11 @@ var http = require('http');
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
-var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var web = express();
 var server = http.createServer(web);
-
-var routes = require('../routes/index');
 
 var port = normalizePort(process.env.PORT || '3000');
 
@@ -21,13 +18,22 @@ web.set('port', port);
 
 // uncomment after placing your favicon in /public
 //web.use(favicon(__dirname + '/public/favicon.ico'));
-web.use(logger('dev'));
 web.use(bodyParser.json());
 web.use(bodyParser.urlencoded({extended: false}));
 web.use(cookieParser());
 web.use('/public', express.static(path.join(__dirname, '../public')));
 
-web.use('/', routes);
+
+var router = express.Router();
+router.get('/partials/*', (req, res) => {
+    res.render('pages/' + req.params['0']);
+});
+
+router.get('*', (req, res) => {
+    res.render('index');
+});
+
+web.use('/', router);
 
 // catch 404 and forward to error handler
 web.use(function (req, res, next) {

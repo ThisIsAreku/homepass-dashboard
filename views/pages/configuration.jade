@@ -1,12 +1,13 @@
 h2 Configuration
 div(role='tabpanel')
-    ul.nav.nav-tabs(role='tablist')
+    ul.nav.nav-pills(role='tablist')
         li.active(role='presentation')
-            a#cfg-ssid(role='tab', href='#ssid', aria-controls='ssid', data-toggle='tab') Access point
+            a(role='tab',href='#ssid',aria-controls='ssid') Access point
         li(role='presentation')
-            a#cfg-bssid(role='tab', href='#bssid', aria-controls='bssid', data-toggle='tab') Mac address
+            a(role='tab',href='#bssid',aria-controls='bssid') Mac address
 div.tab-content
     div#ssid.tab-pane.active(role='tabpanel')
+        h4 Access point name
         table.table.table-striped.table-hover
             tr
                 th Name
@@ -17,4 +18,11 @@ div.tab-content
                 td {{ssid.company}}
                 td {{ssid.zone}}
     div#bssid.tab-pane(role='tabpanel')
-        div bssid
+        h4 Mac address
+        table.table.table-striped.table-hover
+            tr
+                th MAC
+                th Suggested Streetpass Game
+            tr(ng-repeat='bssid in bssidList',ng-cloak)
+                td {{bssid.mac}}
+                td {{bssid.name}}

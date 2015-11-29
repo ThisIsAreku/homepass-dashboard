@@ -3,40 +3,32 @@ html(ng-app="homepass-pi",ng-controller="ApplicationCtrl")
     head
         title Homepass-pi
         link(rel='stylesheet', href='/public/components/bootstrap/dist/css/bootstrap.min.css')
-        link(rel='stylesheet', href='/public/stylesheets/style.css')
         base(href="/")
     body
         div#main-container.container
             nav.navbar.navbar-default
                 div.container-fluid
                     div.navbar-header
-                        a.navbar-brand(href='') Homepass-pi
+                        a.navbar-brand(href='/') Homepass-pi
                     div.collapse.navbar-collapse
-                        ul.nav.navbar-nav
-                            li
-                                a(href='/') Accueil
-                            li
+                        ul.nav.navbar-nav(ng-controller="MenuBarCtrl")
+                            li(ng-class="{ active: isActive('/dashboard')}")
+                                a(href='/dashboard') Accueil
+                            li(ng-class="{ active: isActive('/configuration')}")
                                 a(href='/configuration') Configuration
-                        div.nav.navbar-nav.navbar-right(ng-cloak)
+                        div.nav.navbar-nav.navbar-right(ng-controller='InfoBoxCtrl',ng-cloak)
                             span.label.label-default {{hostapd.currentSsid}} - {{hostapd.currentBssid}}
-                            a#hostapd-toggle.ctrl.require-conn.navbar-btn.btn(href='#',ng-class="hostapd.running ? 'btn-danger' : 'btn-success'",ng-click='toggleHostapd()')
-                                span(ng-if='hostapd.running') Stop
-                                span(ng-if='!hostapd.running') Start
+                            a#hostapd-toggle.ctrl.require-conn.navbar-btn.btn(href='#',ng-class="hostapd.scheduled ? 'btn-danger' : 'btn-success'",ng-click='toggleApp()')
+                                span(ng-if='hostapd.scheduled') Stop
+                                span(ng-if='!hostapd.scheduled') Start
             div.container-wrapper.clearfix
                 div.col-md-8
-                    div(ng-view)
+                    div#main-view
+                        div(ng-view)
                     br.clearfix
                     br.clearfix
                 div.sidebar.col-md-4
-                    div(ng-show='hostapd.running')
-                        h6 Next change
-                        div.media
-                            div.media-left
-                                a(href='#')
-                                    span.glyphicon.glyphicon-pause
-                            div.media-body
-                                div.progress
-                                    div.progress-bar(role="progressbar",aria-valuenow="60",aria-valuemin="0",aria-valuemax="100",style="width: 60%;") 60%
+                    include fragments/info_box
 
                     h6 Console
                     ul(ng-cloak)

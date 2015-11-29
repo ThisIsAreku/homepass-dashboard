@@ -1,0 +1,9 @@
+div(ng-controller='InfoBoxCtrl',ng-show='hostapd.running',ng-cloak)
+    h6 Next change
+    div.media
+        div.media-left
+            a(href='#')
+                span.glyphicon.glyphicon-pause
+        div.media-body
+            div.progress
+                div.progress-bar(role="progressbar",aria-valuenow="{{hostapd.percentage}}",aria-valuemin="0",aria-valuemax="100",style="width: {{hostapd.percentage}}%;") {{hostapd.remaining | date:'HH:mm:ss'}}
