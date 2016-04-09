@@ -8,6 +8,7 @@ module.exports = /*@ngInject*/ ($scope, $log, $socket) => {
             $scope.ssidList = ap;
         });
     });
+    
     $socket.emit('mac-addresses', (mac) => {
         $log.log(mac);
         $scope.$apply(() => {

@@ -13,7 +13,7 @@ var port = normalizePort(process.env.PORT || '3000');
 
 // view engine setup
 web.set('views', path.join(__dirname, '../views'));
-web.set('view engine', 'jade');
+web.set('view engine', 'pug');
 web.set('port', port);
 
 // uncomment after placing your favicon in /public
@@ -87,6 +87,7 @@ function normalizePort(val) {
 
     return false;
 }
+
 server.listen(port);
 
 module.exports = server;

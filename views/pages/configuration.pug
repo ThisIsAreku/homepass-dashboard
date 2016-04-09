@@ -13,16 +13,22 @@ div.tab-content
                 th Name
                 th Company
                 th Zone
+                th Use
             tr(ng-repeat='ssid in ssidList',ng-cloak)
                 td {{ssid.ap}}
                 td {{ssid.company}}
                 td {{ssid.zone}}
+                td
+                    input(type='radio',value='#{ssid.ap}')
     div#bssid.tab-pane(role='tabpanel')
         h4 Mac address
         table.table.table-striped.table-hover
             tr
                 th MAC
-                th Suggested Streetpass Game
+                th Suggested Streetpass Gameth
+                th Use
             tr(ng-repeat='bssid in bssidList',ng-cloak)
                 td {{bssid.mac}}
                 td {{bssid.name}}
+                td
+                    input(type='checkbox',value='#{bssid.mac}')
