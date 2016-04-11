@@ -14,7 +14,7 @@ function compileInfo() {
         lastRotationTimestamp: scheduler.getLastRotationTimestamp(),
         currentBssid: hostapd.getConfig('bssid'),
         currentSsid: hostapd.getConfig('ssid'),
-        percentage: (Date.now() - scheduler.getLastRotationTimestamp() * 100 / scheduler.getScheduleInterval())
+        percentage: ((Date.now() - scheduler.getLastRotationTimestamp()) * 100 / scheduler.getScheduleInterval())
     }
 }
 
@@ -30,9 +30,11 @@ io.on('connection', (socket) => {
         fn(compileInfo());
     });
     socket.on('ctrl-app-stop', () => {
+        console.log("ctrl-app-stop");
         scheduler.cancelSchedule();
     });
     socket.on('ctrl-app-start', () => {
+        console.log("ctrl-app-start");
         scheduler.schedule();
     });
     socket.on('set-temp-mac', (mac) => {

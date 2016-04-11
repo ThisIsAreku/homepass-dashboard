@@ -1,5 +1,6 @@
 "use strict";
-module.exports = /*@ngInject*/ ($scope, $socket) => {
+module.exports = /*@ngInject*/ ($scope, $socket, $log) => {
+    var refreshInterval = null;
     $scope.hostapd = {
         running: false,
         scheduled: false,
@@ -11,31 +12,25 @@ module.exports = /*@ngInject*/ ($scope, $socket) => {
         remaining: 0
     };
 
-    setInterval(() => {
-        if ($scope.hostapd.scheduleInterval == 0) {
-            return;
-        }
-
-        var remaining = $scope.hostapd.lastRotationTimestamp + $scope.hostapd.scheduleInterval - Date.now();
-        var percentage = (Date.now() - $scope.hostapd.lastRotationTimestamp) * 100 / $scope.hostapd.scheduleInterval;
-        $scope.$apply(() => {
-            $scope.hostapd.percentage = percentage;
-            $scope.hostapd.remaining = remaining;
-        });
-    }, 1000);
-
     function applyStats(status) {
+        $log.log('Applying new status', status);
         $scope.$apply(() => {
             $scope.hostapd = status;
         });
     }
 
     $scope.toggleApp = () => {
-        if ($scope.hostapd.scheduled) {
+        if ($scope.hostapd.scheduled || $scope.hostapd.running) {
             $socket.emit('ctrl-app-stop');
         } else {
             $socket.emit('ctrl-app-start');
         }
+    };
+
+    $scope.refreshApp = () => {
+        $socket.emit('hostapd-status', (status) => {
+            applyStats(status);
+        });
     };
 
     $socket.on('connect', () => {
@@ -50,9 +45,5 @@ module.exports = /*@ngInject*/ ($scope, $socket) => {
 
     $socket.on('hostapd-exit', (status) => {
         applyStats(status);
-    });
-
-    $socket.on('hostapd-update', (status) => {
-        //applyStats(status);
     });
 };

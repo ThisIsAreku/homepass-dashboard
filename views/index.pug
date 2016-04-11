@@ -21,6 +21,8 @@ html(ng-app="homepass-pi",ng-controller="ApplicationCtrl")
                             a#hostapd-toggle.ctrl.require-conn.navbar-btn.btn(href='#',ng-class="hostapd.scheduled ? 'btn-danger' : 'btn-success'",ng-click='toggleApp()')
                                 span(ng-if='hostapd.scheduled') Stop
                                 span(ng-if='!hostapd.scheduled') Start
+                            a#hostapd-refresh.ctrl.require-conn.navbar-btn.btn.btn-link(href='#',ng-click='refreshApp()')
+                                span.glyphicon.glyphicon-refresh
             div.container-wrapper.clearfix
                 div.col-md-8
                     div#main-view

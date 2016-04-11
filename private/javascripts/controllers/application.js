@@ -48,7 +48,7 @@ module.exports = /*@ngInject*/ ($scope, $log, $socket) => {
     });
 
     $socket.on('hostapd-update', function (data) {
-        addLogMessage('info', 'hostapd', 'restarted');
+        addLogMessage('info', 'hostapd', 'updated');
         $log.log('hostapd-update', data);
     });
 
