@@ -4,7 +4,7 @@ module.exports = /*@ngInject*/ ($scope, $log, $socket) => {
         'stderr': 'danger',
         'stdout': 'info'
     };
-    $scope.logs = /*localStorageService.get('logs') || */[];
+    $scope.logs  = /*localStorageService.get('logs') || */[];
 
 
     var addLogMessage = (type, tag, msg) => {
@@ -12,8 +12,8 @@ module.exports = /*@ngInject*/ ($scope, $log, $socket) => {
             $scope.logs.push({
                 type: type,
                 date: moment().format('HH:mm:ss'),
-                tag: tag,
-                msg: msg
+                tag : tag,
+                msg : msg
             });
         });
     };

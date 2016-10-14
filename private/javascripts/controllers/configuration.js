@@ -1,22 +1,27 @@
 "use strict";
 module.exports = /*@ngInject*/ ($scope, $log, $socket) => {
-    $scope.ssidList = [];
-    $scope.bssidList = [];
+    $scope.ssidList     = [];
+    $scope.currentSsid  = null;
+    $scope.bssidList    = [];
+    $scope.bssidUseList = [];
 
     $socket.emit('ap-names', (ap) => {
+        $log.log(ap);
         $scope.$apply(() => {
-            $scope.ssidList = ap;
+            $scope.currentSsid = ap.current;
+            $scope.ssidList    = ap.list;
         });
     });
-    
+
     $socket.emit('mac-addresses', (mac) => {
         $log.log(mac);
         $scope.$apply(() => {
-            $scope.bssidList = mac;
+            $scope.bssidUseList = mac.use;
+            $scope.bssidList    = mac.list;
         });
     });
 
-    $scope.setApName = () => {
-
+    $scope.setSsid = (elem) => {
+        $socket.emit('set-ssid', elem.ssid.ap);
     }
 };

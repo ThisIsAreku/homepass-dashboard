@@ -1,29 +1,30 @@
 "use strict";
-const socketio = require('socket.io');
-const hostapd = require('./hostapd');
-const web = require('./web');
-const data = require('./data');
+const socketio  = require('socket.io');
+const hostapd   = require('./hostapd');
+const web       = require('./web');
+const data      = require('./data');
 const scheduler = require('./scheduler');
-const io = socketio(web);
+const io        = socketio(web);
 
 function compileInfo() {
     return {
-        running: hostapd.isRunning(),
-        scheduled: scheduler.isScheduled(),
-        scheduleInterval: scheduler.getScheduleInterval(),
+        running              : hostapd.isRunning(),
+        scheduled            : scheduler.isScheduled(),
+        scheduleInterval     : scheduler.getScheduleInterval(),
         lastRotationTimestamp: scheduler.getLastRotationTimestamp(),
-        currentBssid: hostapd.getConfig('bssid'),
-        currentSsid: hostapd.getConfig('ssid'),
-        percentage: ((Date.now() - scheduler.getLastRotationTimestamp()) * 100 / scheduler.getScheduleInterval())
+        currentTimestamp     : Date.now(),
+        currentBssid         : hostapd.getConfig('bssid'),
+        currentSsid          : hostapd.getConfig('ssid'),
+        percentage           : ((Date.now() - scheduler.getLastRotationTimestamp()) * 100 / scheduler.getScheduleInterval())
     }
 }
 
 io.on('connection', (socket) => {
     socket.on('ap-names', (fn) => {
-        fn(data.getAPNames());
+        fn({list: data.getAPNames(), current: hostapd.getConfig('ssid')});
     });
     socket.on('mac-addresses', (fn) => {
-        fn(data.getMacAddresses());
+        fn({list: data.getMacAddresses(), use: [hostapd.getConfig('bssid')]});
     });
 
     socket.on('hostapd-status', (fn) => {
@@ -39,6 +40,10 @@ io.on('connection', (socket) => {
     });
     socket.on('set-temp-mac', (mac) => {
         hostapd.setBssid(mac);
+        hostapd.restart();
+    });
+    socket.on('set-ssid', (ssid) => {
+        hostapd.setSsid(ssid);
         hostapd.restart();
     });
 });
@@ -66,4 +71,4 @@ exports = module.exports = {
     "cleanup": () => {
         console.log("cleanup");
     }
-}
+};

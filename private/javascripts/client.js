@@ -8,6 +8,11 @@ app.filter('reverse', () => {
         return items.slice().reverse();
     };
 });
+app.filter('msToDateTime', [function () {
+    return function (ms) {
+        return new Date(1970, 0, 1).setMilliseconds(ms);
+    };
+}])
 
 /*app.config(['localStorageServiceProvider', (localStorageServiceProvider) => {
  localStorageServiceProvider.setPrefix('ls');

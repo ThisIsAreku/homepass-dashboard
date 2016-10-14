@@ -1,14 +1,14 @@
 "use strict";
 const hostapd = require('./hostapd');
-const data = require('./data');
+const data    = require('./data');
 
 class Scheduler {
     constructor() {
-        this.scheduler = null;
+        this.scheduler             = null;
         this.lastRotationTimestamp = 0;
-        this.macArchive = [];
+        this.macArchive            = [];
 
-        hostapd.setBssid('BA:6A:CE:E7:4E:F1');
+        hostapd.setBssid('4E:53:50:4F:4F:41');
         hostapd.setSsid('NintendoSpotPass1');
     }
 
@@ -55,10 +55,10 @@ class Scheduler {
     }
 
     pickRandomMacAddress() {
-        var m = null;
+        var m  = null;
         var ok = true;
         do {
-            m = data.getMacAddresses()[~~(Math.random() * data.getMacAddresses().length)];
+            m  = data.getMacAddresses()[~~(Math.random() * data.getMacAddresses().length)];
             ok = true;
             for (let index = 0; index < this.macArchive.length; index++) {
                 let elem = this.macArchive[index];

@@ -1,16 +1,23 @@
 "use strict";
 module.exports = /*@ngInject*/ ($scope, $socket, $log) => {
-    var refreshInterval = null;
     $scope.hostapd = {
-        running: false,
-        scheduled: false,
-        scheduleInterval: 0,
+        running              : false,
+        scheduled            : false,
+        scheduleInterval     : 0,
+        currentTimestamp     : 0,
         lastRotationTimestamp: 0,
-        currentBssid: '',
-        currentSsid: '',
-        percentage: 0,
-        remaining: 0
+        currentBssid         : '',
+        currentSsid          : '',
+        percentage           : 0,
+        remaining            : 0
     };
+
+    var refreshInterval = setInterval(() => {
+        $scope.$apply(() => {
+            $scope.hostapd.remaining  = ($scope.hostapd.lastRotationTimestamp + $scope.hostapd.scheduleInterval) - Date.now();
+            $scope.hostapd.percentage = ((Date.now() - $scope.hostapd.lastRotationTimestamp) * 100 / $scope.hostapd.scheduleInterval);
+        });
+    }, 1000);
 
     function applyStats(status) {
         $log.log('Applying new status', status);

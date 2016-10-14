@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node index.js"
+    "start": "node --harmony index.js"
   },
   "dependencies": {
     "body-parser": "^1.15.0",
@@ -18,6 +18,7 @@
     "morgan": "^1.7.0",
     "pug": "^2.0.0-alpha3",
     "serve-favicon": "^2.3.0",
+    "sheetrock": "^1.1.1",
     "socket.io": "^1.4.5",
     "style-loader": "^0.13.1",
     "sudo": "^1.0.3",

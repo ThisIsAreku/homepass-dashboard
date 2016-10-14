@@ -1,8 +1,8 @@
 "use strict";
-const hostapd = require('./hostapd');
+const hostapd   = require('./hostapd');
 const scheduler = require('./scheduler');
-const web = require('./web');
-const socket = require('./socket');
+const web       = require('./web');
+const socket    = require('./socket');
 
 
 /**

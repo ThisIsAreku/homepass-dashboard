@@ -5,13 +5,13 @@ module.exports = /*@ngInject*/ ($routeProvider, $locationProvider) => {
     // Configuration
         .when("/configuration", {
             templateUrl: "/partials/configuration",
-            controller: 'ConfigurationCtrl'
+            controller : 'ConfigurationCtrl'
         })
 
         // Dashboard
         .when("/dashboard", {
             templateUrl: "/partials/dashboard",
-            controller: 'DashboardCtrl'
+            controller : 'DashboardCtrl'
         })
 
         // Default

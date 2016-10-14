@@ -1,1 +1,2 @@
-var app = require('./src/app.js');
+"use strict";
+const app = require('./src/app.js');

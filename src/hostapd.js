@@ -1,31 +1,31 @@
 "use strict";
-const sudo = require('sudo');
-const os = require('os');
-const fs = require('fs');
+const sudo  = require('sudo');
+const os    = require('os');
+const fs    = require('fs');
 const merge = require('merge');
 
 class Hostapd extends require('events').EventEmitter {
     constructor() {
         super();
 
-        this.configFile = os.tmpdir() + '/hostapd.conf';
+        this.configFile     = os.tmpdir() + '/hostapd.conf';
         this.hostapdProcess = null;
-        this.running = false;
+        this.running        = false;
 
         this.defaultConfig = {
-            "interface": "wlan0",
-            "bridge": "br0",
-            "driver": "nl80211",
-            "ssid": null,
-            "bssid": null,
-            "hw_mode": "g",
-            "channel": "6",
-            "auth_algs": "1",
-            "wpa": "0",
-            "macaddr_acl": "1",
+            "interface"            : "wlan0",
+            "bridge"               : "br0",
+            "driver"               : "nl80211",
+            "ssid"                 : null,
+            "bssid"                : null,
+            "hw_mode"              : "g",
+            "channel"              : "6",
+            "auth_algs"            : "1",
+            "wpa"                  : "0",
+            "macaddr_acl"          : "1",
             //"accept_mac_file": %"accept_mac_file%",
-            "ieee80211n": "1",
-            "wmm_enabled": "0",
+            "ieee80211n"           : "1",
+            "wmm_enabled"          : "0",
             "ignore_broadcast_ssid": "0"
         };
         this.currentConfig = {};
@@ -41,7 +41,7 @@ class Hostapd extends require('events').EventEmitter {
         // hostapdProcess = sudo(['ifconfig', configFile]);
         // debug
         this.hostapdProcess = require('child_process').spawn('./testlog.sh');
-        var firstData = true;
+        var firstData       = true;
         this.hostapdProcess.stdout.on('data', (data) => {
             this.running = true;
             if (firstData) {
@@ -78,17 +78,20 @@ class Hostapd extends require('events').EventEmitter {
     }
 
     stop() {
-        if (this.running) {
+        if (this.running && this.hostapdProcess !== null) {
             this.hostapdProcess.kill();
         }
+
+        this.running = false;
     }
 
     restart() {
         this.stop();
-        this.hostapdProcess.on('exit', (code, signal) => {
-            this.start();
-        })
-        ;
+        if (this.hostapdProcess !== null) {
+            this.hostapdProcess.once('exit', (code, signal) => {
+                this.start();
+            });
+        }
     }
 
     setBssid(mac) {
@@ -108,7 +111,7 @@ class Hostapd extends require('events').EventEmitter {
 
     buildConfigFile() {
         return new Promise((resolve, reject) => {
-            var finalConfig = merge(this.defaultConfig, this.currentConfig);
+            var finalConfig     = merge(this.defaultConfig, this.currentConfig);
             var finalConfigText = '';
             Object.keys(finalConfig).forEach((key) => {
                 var val = finalConfig[key];

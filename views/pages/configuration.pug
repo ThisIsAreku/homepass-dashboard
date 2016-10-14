@@ -19,7 +19,7 @@ div.tab-content
                 td {{ssid.company}}
                 td {{ssid.zone}}
                 td
-                    input(type='radio',value='#{ssid.ap}')
+                    input(type='radio',name="ssid",value='#{ssid.ap}',ng-click="setSsid(this)",ng-checked="ssid.ap == currentSsid")
     div#bssid.tab-pane(role='tabpanel')
         h4 Mac address
         table.table.table-striped.table-hover
@@ -31,4 +31,4 @@ div.tab-content
                 td {{bssid.mac}}
                 td {{bssid.name}}
                 td
-                    input(type='checkbox',value='#{bssid.mac}')
+                    input(type='checkbox',value='#{bssid.mac}',onClick="addRemoveBssid()",ng-checked="bssidUseList.indexOf(bssid.mac) !== -1")

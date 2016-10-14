@@ -1,4 +1,4 @@
 div(ng-controller='InfoBoxCtrl',ng-show='hostapd.scheduled',ng-cloak)
     h6 Next change
     div.progress
-        div.progress-bar(ng-class="hostapd.scheduled ? 'progress-bar-striped active' : ''",role="progressbar",aria-valuenow="{{hostapd.percentage}}",aria-valuemin="0",aria-valuemax="100",style="width: {{hostapd.percentage}}%;") {{hostapd.remaining | date:'HH:mm:ss'}}
+        div.progress-bar(ng-class="hostapd.scheduled ? 'progress-bar-striped active' : ''",role="progressbar",aria-valuenow="{{hostapd.percentage}}",aria-valuemin="0",aria-valuemax="100",style="width: {{hostapd.percentage}}%;") {{hostapd.remaining | msToDateTime | date:'HH:mm:ss'}}

@@ -1,12 +1,12 @@
 "use strict";
-var http = require('http');
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
+var http         = require('http');
+var express      = require('express');
+var path         = require('path');
+var favicon      = require('serve-favicon');
 var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+var bodyParser   = require('body-parser');
 
-var web = express();
+var web    = express();
 var server = http.createServer(web);
 
 var port = normalizePort(process.env.PORT || '3000');
@@ -37,7 +37,7 @@ web.use('/', router);
 
 // catch 404 and forward to error handler
 web.use(function (req, res, next) {
-    var err = new Error('Not Found');
+    var err    = new Error('Not Found');
     err.status = 404;
     next(err);
 });
@@ -51,7 +51,7 @@ if (web.get('env') === 'development') {
         res.status(err.status || 500);
         res.render('error', {
             message: err.message,
-            error: err
+            error  : err
         });
     });
 }
@@ -62,10 +62,9 @@ web.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,
-        error: {}
+        error  : {}
     });
 });
-
 
 
 /**
